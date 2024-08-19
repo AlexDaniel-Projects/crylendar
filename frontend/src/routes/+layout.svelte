@@ -51,7 +51,7 @@
 		/>
 	</svelte:fragment>
 
-	<AppBar title="Crylendar – count the days you cry" class="">
+	<AppBar title="crylendar – track your mood throughout the years" class="">
 		<div slot="title" class="text-center w-full">
 			<!--<h1 class="text-2xl font-semibold">Welcome to ✨Crylendar✨</h1>-->
 		</div>

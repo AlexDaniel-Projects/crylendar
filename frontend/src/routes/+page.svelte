@@ -1,15 +1,59 @@
 <script lang="ts">
-	import { Button, ScrollingValue } from 'svelte-ux';
-	import { mdiChevronLeft, mdiChevronRight } from '@mdi/js';
+	import { Button, ScrollingValue, Dialog, SelectField, Field, Input } from 'svelte-ux';
+	import { mdiChevronLeft, mdiChevronRight, mdiInformationOutline, mdiPlusBox } from '@mdi/js';
 	import { format, getDaysInMonth } from 'date-fns';
+	import { page } from '$app/stores';
+	import { onMount } from 'svelte';
+
+	const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 	type Option = '😢' | '😭' | '😡' | '😌';
-
 	const options: Option[] = ['😢', '😭', '😡', '😌'];
 
-	const data: Record<string, Option | undefined> = {
-		'2024-08-25': '😭'
+	let loading = false;
+
+	let availableCalendars = [
+		{ label: 'public calendar', value: 'public' }, //
+		{ label: 'another public calendar', value: 'public-2' } //
+	];
+
+	interface CalendarData {
+		token: string;
+		name: string;
+		data: Record<string, Option | undefined>;
+		createdAt: Date;
+	}
+
+	let calendarData: CalendarData = {
+		token: '',
+		name: '',
+		data: {},
+		createdAt: new Date()
 	};
+
+	const calendarToken = $page.url.searchParams.get('id');
+
+	onMount(() => {
+		if (!calendarToken) {
+			window.location.href = `?id=public`;
+		}
+		if (calendarToken) {
+			fetchData(calendarToken);
+		}
+	});
+
+	async function fetchData(calendarToken: string) {
+		try {
+			loading = true;
+			const response = await fetch(`${apiUrl}/calendars/${calendarToken}/`);
+			if (response.status === 200) {
+				calendarData = await response.json();
+			}
+			loading = false;
+		} catch (error) {
+			console.error('Failed to fetch data:', error);
+		}
+	}
 
 	let currentYear = new Date().getFullYear();
 
@@ -31,54 +75,123 @@
 		return formattedDate;
 	}
 
-	function setDataPoint(formattedDate: string) {
-		data[formattedDate] = options[Math.floor(Math.random() * options.length)];
-	}
-
-	function toggleDataPoint(formattedDate: string) {
+	async function toggleDataPoint(formattedDate: string) {
 		// @ts-expect-error -- indexOf returns -1 if not found, that's OK
-		let index = options.indexOf(data[formattedDate]);
+		let index = options.indexOf(calendarData.data[formattedDate]);
 		index += 1;
 		if (index >= options.length) {
-			data[formattedDate] = undefined;
+			calendarData.data[formattedDate] = undefined;
 		} else {
-			data[formattedDate] = options[index];
+			calendarData.data[formattedDate] = options[index];
 		}
+
+		try {
+			const response = await fetch(`${apiUrl}/calendars/${calendarToken}/data/`, {
+				method: 'PUT',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ date: formattedDate, value: calendarData.data[formattedDate] })
+			});
+			if (response.status !== 200) {
+				console.error('Failed to update data:', response);
+			}
+		} catch (error) {
+			console.error('Failed to update data:', error);
+		}
+	}
+
+	function isWeekend(formattedDate: string) {
+		const date = new Date(formattedDate);
+		return date.getDay() === 0 || date.getDay() === 6;
+	}
+
+	let dialogOpen = false;
+	let newCalendarName = 'my new calendar';
+
+	function openDialog() {
+		dialogOpen = true;
+	}
+	async function createCalendar() {
+		try {
+			const result = await fetch(`${apiUrl}/calendars/`, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ name: newCalendarName })
+			});
+			const createdCalendars = await result.json();
+			if (createdCalendars.length === 1) {
+				const { token } = createdCalendars[0];
+				window.location.href = `?id=${token}`;
+			}
+		} catch (error) {
+			console.error('Failed to create calendar:', error);
+		}
+	}
+	function changeCalendar(event: CustomEvent) {
+		window.location.href = `?id=${event.detail.value}`;
 	}
 </script>
 
 <main class="p-4 grid place-items-center content-center">
+	<Dialog bind:open={dialogOpen}>
+		<div slot="title">create new calendar</div>
+		<div slot="actions">
+			<Button variant="fill" color="primary" on:click={createCalendar}>create</Button>
+		</div>
+		<div class="m-6 mt-2">
+			<Field label="calendar name" let:id>
+				<Input {id} bind:value={newCalendarName} class="min-w-[300px]" />
+			</Field>
+		</div>
+	</Dialog>
 	<div class="flex items-center mb-4 gap-1">
+		<Button icon={mdiInformationOutline} variant="fill" color="primary">about</Button>
+
 		<Button icon={mdiChevronLeft} variant="fill" color="primary" on:click={() => currentYear--}
-			>Previous Year</Button
+			>previous year</Button
 		>
 		<Button variant="fill" color="primary" disabled>{currentYear}</Button>
 		<Button icon={mdiChevronRight} variant="fill" color="primary" on:click={() => currentYear++}
-			>Next Year</Button
+			>next year</Button
+		>
+
+		|
+
+		<SelectField
+			label="current calendar"
+			options={availableCalendars}
+			clearable={false}
+			dense={true}
+			stepper={true}
+			on:change={changeCalendar}
+		/>
+		<Button icon={mdiPlusBox} variant="fill" color="primary" on:click={openDialog}>
+			create new</Button
 		>
 	</div>
 
-	<div class="grid grid-cols-1 w-full">
+	<div class="grid grid-cols-1 w-full min-w-[1200px]">
 		{#each months as month, i}
 			<div class="grid grid-cols-[repeat(32,_minmax(0,_1fr))] justify-items-center items-center">
 				<div class="font-bold">{month}</div>
 				{#each days as day}
 					{@const key = asKey(currentYear, i + 1, day)}
 					<div class="w-full">
-						<!-- button with on click -->
 						<button
 							on:mousedown={() => toggleDataPoint(key)}
 							class="w-full Button flex items-center justify-center"
+							disabled={key > today}
 						>
 							<ScrollingValue
 								axis="x"
-								value={day <= daysInMonth[i] ? options.indexOf(data[key]) : -2}
+								value={day <= daysInMonth[i] ? options.indexOf(calendarData.data[key]) : -2}
 								let:value
 							>
 								<div
 									class={`min-h-[52px] flex items-center justify-center ${value !== -1 ? 'text-3xl' : 'text-lg'}`}
 								>
-									<div class={key === today ? 'font-bold bg-red-500' : ''}>
+									<div
+										class="{key === today ? 'today' : ''} {isWeekend(key) ? 'weekend' : 'workday'}"
+									>
 										{#if value > -2}
 											{options[value] ?? day}
 										{/if}
@@ -92,3 +205,30 @@
 		{/each}
 	</div>
 </main>
+
+<style lang="postcss">
+	.workday {
+		color: var(--color-secondary);
+		transition: color 0.2s linear;
+	}
+	.weekend {
+		color: #888;
+		transition: color 0.2s linear;
+	}
+
+	button {
+		border-radius: 4px;
+		transition: opacity 0.2s linear;
+	}
+	button:disabled {
+		opacity: 0.2;
+		cursor: not-allowed;
+	}
+	button:hover {
+		background-color: rgba(126, 126, 126, 0.05);
+	}
+
+	.today {
+		font-weight: bold;
+	}
+</style>
