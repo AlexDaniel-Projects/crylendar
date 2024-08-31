@@ -10,6 +10,7 @@
 	type Option = '😢' | '😭' | '😡' | '😌';
 	const options: Option[] = ['😢', '😭', '😡', '😌'];
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars -- temporarily not used
 	let loading = false;
 
 	let availableCalendars = [
