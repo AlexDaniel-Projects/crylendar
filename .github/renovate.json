@@ -4,6 +4,10 @@
   "prHourlyLimit": 8,
   "packageRules": [
     {
+      "paths": [".github/**"],
+      "groupName": "actions"
+    },
+    {
       "paths": ["frontend/**"],
       "groupName": "frontend"
     },
