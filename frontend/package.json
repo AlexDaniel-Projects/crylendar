@@ -1,5 +1,6 @@
 {
-	"name": "frontend",
+	"name": "crylendar-frontend",
+	"packageManager": "pnpm@9.9.0",
 	"version": "0.0.1",
 	"private": true,
 	"type": "module",
