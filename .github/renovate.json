@@ -24,6 +24,11 @@
     {
       "paths": ["db/**"],
       "groupName": "db"
+    },
+    {
+      "matchPackageNames": ["eslint"],
+      "matchPaths": ["**"],
+      "allowedVersions": "<9.0.0"
     }
   ]
 }
