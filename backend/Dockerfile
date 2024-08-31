@@ -19,5 +19,7 @@ COPY . .
 FROM base
 WORKDIR /srv
 
+COPY --from=build_stage /srv .
+
 EXPOSE 3000
-CMD pnpm start
+CMD ["pnpm", "tsx", "src/index.ts"]
