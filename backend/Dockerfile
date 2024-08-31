@@ -1,4 +1,10 @@
-FROM node:22.7.0-slim as build_stage
+FROM node:22.7.0-slim AS base
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
+
+
+FROM base AS build_stage
 WORKDIR /srv
 
 COPY package.json pnpm-lock.yaml ./
@@ -10,7 +16,7 @@ COPY . .
 RUN pnpm build
 
 
-FROM node:22.7.0-slim
+FROM base
 WORKDIR /srv
 
 EXPOSE 3000
