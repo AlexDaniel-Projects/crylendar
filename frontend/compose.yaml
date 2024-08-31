@@ -1,0 +1,25 @@
+version: '3.7'
+
+services:
+  frontend:
+    image: postmodern.alexdaniel.org/crylendar-frontend:latest
+    build:
+      context: .
+    networks:
+      - caddy
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 30s
+        order: start-first
+
+      labels:
+        caddy: crylendar.org
+        caddy.tls: alex.jakimenko+caddy@gmail.com
+        caddy.reverse_proxy: '{{upstreams 80}}'
+        # caddy.try_files: "{path} /"
+
+networks:
+  caddy:
+    external: true

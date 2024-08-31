@@ -1,0 +1,23 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:base", "schedule:weekends"],
+  "prHourlyLimit": 8,
+  "packageRules": [
+    {
+      "paths": ["frontend/**"],
+      "groupName": "frontend"
+    },
+    {
+      "paths": ["backend/**"],
+      "groupName": "backend"
+    },
+    {
+      "paths": ["e2e/**"],
+      "groupName": "e2e"
+    },
+    {
+      "paths": ["db/**"],
+      "groupName": "db"
+    }
+  ]
+}

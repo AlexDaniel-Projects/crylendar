@@ -1,0 +1,19 @@
+name: crylendar
+
+services:
+  postgres:
+    image: postgres:16.4-alpine3.20
+    environment:
+      POSTGRES_DB: crylendar
+      POSTGRES_USER: crylendar
+      POSTGRES_PASSWORD: crylendar
+    networks:
+      - caddy
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    deploy:
+      replicas: 1
+
+networks:
+  caddy:
+    external: true

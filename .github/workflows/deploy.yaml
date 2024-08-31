@@ -1,0 +1,180 @@
+name: Deploy
+
+on: push
+
+jobs:
+  frontend-lint:
+    name: frontend (lint)
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./frontend
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: latest
+      - uses: pnpm/action-setup@v2
+        name: Install pnpm
+        id: pnpm-install
+        with:
+          version: latest
+          run_install: false
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path)" >> "$GITHUB_OUTPUT"
+      - uses: actions/cache@v4
+        name: Setup pnpm cache
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+      - name: Install dependencies
+        run: pnpm install
+      - name: Run ESLint
+        run: pnpm run lint --no-fix --max-warnings=0
+
+  frontend-build-and-deploy:
+    name: frontend (build and deploy)
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./frontend
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Login to Docker registry
+        uses: docker/login-action@v3
+        with:
+          registry: postmodern.alexdaniel.org
+          username: ${{ github.event.repository.name }}
+          password: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
+      - name: Build and push
+        id: docker_build
+        uses: docker/build-push-action@v5
+        with:
+          context: ./frontend
+          push: true
+          tags: postmodern.alexdaniel.org/crylendar-frontend:${{ github.sha }} ${{ github.ref == 'refs/heads/main' && ', postmodern.alexdaniel.org/crylendar-frontend:latest' || '' }}
+      - name: Set SSH key
+        if: github.ref == 'refs/heads/main'
+        uses: webfactory/ssh-agent@v0.8.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_KEY }}
+      - name: Auth
+        if: github.ref == 'refs/heads/main'
+        run: ssh-keyscan -H postmodern.alexdaniel.org >> ~/.ssh/known_hosts
+      - name: Deploy
+        if: github.ref == 'refs/heads/main'
+        run: docker stack deploy --with-registry-auth -c compose.yaml crylendar-frontend
+        env:
+          DOCKER_HOST: ssh://crylendar@postmodern.alexdaniel.org
+
+  backend-lint:
+    name: backend (lint)
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./backend
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: latest
+      - uses: pnpm/action-setup@v2
+        name: Install pnpm
+        id: pnpm-install
+        with:
+          version: latest
+          run_install: false
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path)" >> "$GITHUB_OUTPUT"
+      - uses: actions/cache@v4
+        name: Setup pnpm cache
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+      - name: Install dependencies
+        run: pnpm install
+      - name: Run ESLint
+        run: pnpm run lint --no-fix --max-warnings=0
+
+  backend-build-and-deploy:
+    name: backend (build and deploy)
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./backend
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Login to Docker registry
+        uses: docker/login-action@v3
+        with:
+          registry: postmodern.alexdaniel.org
+          username: ${{ github.event.repository.name }}
+          password: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
+      - name: Build and push
+        id: docker_build
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend
+          push: true
+          tags: postmodern.alexdaniel.org/crylendar-backend:${{ github.sha }} ${{ github.ref == 'refs/heads/main' && ', postmodern.alexdaniel.org/crylendar-backend:latest' || '' }}
+      - name: Set SSH key
+        if: github.ref == 'refs/heads/main'
+        uses: webfactory/ssh-agent@v0.8.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_KEY }}
+      - name: Auth
+        if: github.ref == 'refs/heads/main'
+        run: ssh-keyscan -H postmodern.alexdaniel.org >> ~/.ssh/known_hosts
+      - name: Deploy
+        if: github.ref == 'refs/heads/main'
+        run: docker stack deploy --with-registry-auth -c compose.yaml crylendar-backend
+        env:
+          DOCKER_HOST: ssh://crylendar@postmodern.alexdaniel.org
+
+  db-build-and-deploy:
+    name: db (build and deploy)
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./db
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Login to Docker registry
+        uses: docker/login-action@v3
+        with:
+          registry: postmodern.alexdaniel.org
+          username: ${{ github.event.repository.name }}
+          password: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
+      - name: Set SSH key
+        if: github.ref == 'refs/heads/main'
+        uses: webfactory/ssh-agent@v0.8.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_KEY }}
+      - name: Auth
+        if: github.ref == 'refs/heads/main'
+        run: ssh-keyscan -H postmodern.alexdaniel.org >> ~/.ssh/known_hosts
+      - name: Deploy
+        if: github.ref == 'refs/heads/main'
+        run: docker stack deploy --with-registry-auth -c compose.yaml crylendar-db
+        env:
+          DOCKER_HOST: ssh://crylendar@postmodern.alexdaniel.org
