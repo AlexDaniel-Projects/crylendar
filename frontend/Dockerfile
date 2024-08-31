@@ -16,8 +16,10 @@ COPY . .
 RUN pnpm build
 
 
-FROM caddy:2.8.4-alpine
+FROM base
 WORKDIR /srv
 
-COPY --from=build_stage /srv/dist/spa .
-CMD caddy file-server
+COPY --from=build_stage /srv .
+
+EXPOSE 3000
+CMD ["node", "dist/index.js"]
