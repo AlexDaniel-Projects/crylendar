@@ -21,5 +21,6 @@ WORKDIR /srv
 
 COPY --from=build_stage /srv .
 
-EXPOSE 3000
+EXPOSE 80
+ENV PORT 80
 CMD ["node", "dist/index.js"]
