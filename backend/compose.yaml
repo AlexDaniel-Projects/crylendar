@@ -19,7 +19,7 @@ services:
         order: start-first
 
       labels:
-        caddy: api.crylendar.org
+        caddy: crypi.crylendar.org
         caddy.tls: alex.jakimenko+caddy@gmail.com
         caddy.reverse_proxy: "{{upstreams 80}}"
         # caddy.try_files: "{path} /"
