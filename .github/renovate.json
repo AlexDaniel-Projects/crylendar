@@ -3,6 +3,7 @@
   "extends": ["config:base", "schedule:weekends"],
   "prHourlyLimit": 8,
   "rangeStrategy": "pin",
+  "rebaseWhen": "behind-base-branch",
   "packageRules": [
     {
       "paths": [".github/**"],
