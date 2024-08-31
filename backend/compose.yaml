@@ -1,8 +1,6 @@
-name: crylendar
-
 services:
   backend:
-    image: postmodern.alexdaniel.org/${COMPOSE_PROJECT_NAME}-backend:latest
+    image: postmodern.alexdaniel.org/crylendar-backend:latest
     environment:
       DB_HOST: db
       DB_PORT: 5432
