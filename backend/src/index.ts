@@ -24,7 +24,11 @@ if (process.env.NODE_ENV === "production") {
 
 const app = new Hono();
 
-app.use("*", cors({ origin: "http://localhost:5173" }));
+if (process.env.NODE_ENV === "production") {
+  app.use("*", cors({ origin: "https://crylendar.org" }));
+} else {
+  app.use("*", cors({ origin: "*" }));
+}
 
 app.get("/calendars/:id/", async (c) => {
   const token = c.req.param("id");
