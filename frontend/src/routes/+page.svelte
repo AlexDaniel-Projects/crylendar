@@ -7,8 +7,8 @@
 
 	const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
-	type Option = '😢' | '😭' | '😡' | '😌';
-	const options: Option[] = ['😢', '😭', '😡', '😌'];
+	type Option = '😌' | '😢' | '😭' | '😡' | '😊';
+	const options: Option[] = ['😌', '😢', '😭', '😡', '😊'];
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars -- temporarily not used
 	let loading = false;
