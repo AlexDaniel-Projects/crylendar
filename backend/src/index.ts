@@ -30,6 +30,18 @@ if (process.env.NODE_ENV === "production") {
   app.use("*", cors({ origin: "*" }));
 }
 
+async function ensurePublicCalendar(token: string, name: string) {
+  const calendar = await db.query.calendars.findFirst({
+    where: eq(schema.calendars.token, token),
+  });
+  if (!calendar) {
+    console.log(`Pre-creating calendar ${name}`);
+    await db.insert(schema.calendars).values({ name, token }).returning();
+  }
+}
+await ensurePublicCalendar("public", "public calendar");
+await ensurePublicCalendar("public-2", "another public calendar");
+
 app.get("/calendars/:id/", async (c) => {
   const token = c.req.param("id");
   const calendar = await db.query.calendars.findFirst({
