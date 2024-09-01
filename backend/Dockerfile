@@ -22,4 +22,4 @@ WORKDIR /srv
 COPY --from=build_stage /srv .
 
 EXPOSE 3000
-CMD ["pnpm", "tsx", "src/index.ts"]
+CMD ["node", "--import", "tsx", "src/index.ts"]

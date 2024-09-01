@@ -2,6 +2,7 @@ services:
   backend:
     image: postmodern.alexdaniel.org/crylendar-backend:latest
     environment:
+      NODE_ENV: production
       DB_HOST: crylendar-db_postgres
       DB_PORT: 5432
       DB_NAME: crylendar

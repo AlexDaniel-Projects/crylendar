@@ -1,4 +1,5 @@
 import { drizzle } from "drizzle-orm/postgres-js";
+import { migrate } from "drizzle-orm/postgres-js/migrator";
 import postgres from "postgres";
 import { serve } from "@hono/node-server";
 import { Hono } from "hono";
@@ -16,6 +17,10 @@ function randomName() {
 
 const queryClient = postgres(postgresUrl);
 const db = drizzle(queryClient, { schema });
+
+if (process.env.NODE_ENV === "production") {
+  await migrate(db, { migrationsFolder: "./drizzle" });
+}
 
 const app = new Hono();
 

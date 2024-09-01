@@ -1,6 +1,7 @@
 {
   "name": "crylendar-backend",
   "packageManager": "pnpm@9.9.0",
+  "type": "module",
   "private": true,
   "scripts": {
     "lint": "eslint .",
