@@ -11,6 +11,9 @@ services:
         parallelism: 1
         delay: 30s
         order: start-first
+      restart_policy:
+        delay: 1s
+        window: 120s
 
       labels:
         caddy: crylendar.org
