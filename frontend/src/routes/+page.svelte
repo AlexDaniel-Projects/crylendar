@@ -130,6 +130,16 @@
 	function changeCalendar(event: CustomEvent) {
 		window.location.href = `?id=${event.detail.value}`;
 	}
+
+	function valueForDay(key: string, day: number, month: number) {
+		if (day > daysInMonth[month]) {
+			return -2;
+		}
+		if (!calendarData.data[key]) {
+			return -1;
+		}
+		return options.indexOf(calendarData.data[key]);
+	}
 </script>
 
 <main class="p-4 grid place-items-center content-center">
@@ -182,11 +192,7 @@
 							class="w-full Button flex items-center justify-center"
 							disabled={key > today}
 						>
-							<ScrollingValue
-								axis="x"
-								value={day <= daysInMonth[i] ? options.indexOf(calendarData.data[key]) : -2}
-								let:value
-							>
+							<ScrollingValue axis="x" value={valueForDay(key, day, i)} let:value>
 								<div
 									class={`min-h-[52px] flex items-center justify-center ${value !== -1 ? 'text-3xl' : 'text-lg'}`}
 								>
