@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { Button, ScrollingValue, Dialog, SelectField, Field, Input } from 'svelte-ux';
-	import { mdiChevronLeft, mdiChevronRight, mdiPlusBox } from '@mdi/js';
+	import { Button, ScrollingValue, Dialog, SelectField, Field, Input, Icon } from 'svelte-ux';
+	import { mdiChevronLeft, mdiChevronRight, mdiPlusBox, mdiInformationOutline } from '@mdi/js';
 	import { format, getDaysInMonth } from 'date-fns';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
@@ -169,10 +169,14 @@
 		<div slot="actions">
 			<Button variant="fill" color="primary" on:click={createCalendar}>create</Button>
 		</div>
-		<div class="m-6 mt-2">
+		<div class="m-6 mt-2 mb-2">
 			<Field label="calendar name" let:id>
 				<Input {id} bind:value={newCalendarName} class="min-w-[300px]" />
 			</Field>
+		</div>
+		<div class="mx-6 my-3">
+			<Icon path={mdiInformationOutline} />
+			only you and people who have the link will be able to see it
 		</div>
 	</Dialog>
 	<div class="flex flex-wrap-reverse items-stretch mb-4 gap-1 justify-center">
