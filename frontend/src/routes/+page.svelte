@@ -156,11 +156,11 @@
 	</Dialog>
 	<div class="flex items-stretch mb-4 gap-1">
 		<Button icon={mdiChevronLeft} variant="fill" color="primary" on:click={() => currentYear--}
-			>previous year</Button
+			><div class="px-2">previous year</div></Button
 		>
 		<Button variant="fill" color="primary" disabled>{currentYear}</Button>
 		<Button icon={mdiChevronRight} variant="fill" color="primary" on:click={() => currentYear++}
-			>next year</Button
+			><div class="px-2">next year</div></Button
 		>
 
 		<SelectField
@@ -171,8 +171,8 @@
 			stepper={true}
 			on:change={changeCalendar}
 		/>
-		<Button icon={mdiPlusBox} variant="fill" color="primary" on:click={openDialog}>
-			create new</Button
+		<Button icon={mdiPlusBox} variant="fill" color="primary" on:click={openDialog}
+			><div class="pl-2">create new</div></Button
 		>
 	</div>
 
