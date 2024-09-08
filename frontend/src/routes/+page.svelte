@@ -38,11 +38,13 @@
 	$: calendarToken = $page.url.searchParams.get('id');
 
 	$: {
-		if (!calendarToken) {
-			goto(`?id=public`);
-		}
-		if (calendarToken && browser) {
-			fetchData(calendarToken);
+		if (browser) {
+			if (!calendarToken) {
+				goto(`?id=public`);
+			}
+			if (calendarToken) {
+				fetchData(calendarToken);
+			}
 		}
 	}
 
