@@ -8,7 +8,7 @@
 	<p class="my-2">Track your mood throughout the years!</p>
 
 	<p class="my-2">
-		Built with
+		Powered by
 		<Button target="_blank" color="primary" class="p-0 py-0.5" href="https://svelte.dev/"
 			>Svelte</Button
 		>,
