@@ -3,8 +3,8 @@
 	import { mdiChevronLeft, mdiChevronRight, mdiPlusBox } from '@mdi/js';
 	import { format, getDaysInMonth } from 'date-fns';
 	import { page } from '$app/stores';
+	import { goto } from '$app/navigation';
 	import { browser } from '$app/environment';
-	import { onMount } from 'svelte';
 
 	const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
@@ -33,16 +33,16 @@
 		createdAt: new Date()
 	};
 
-	const calendarToken = $page.url.searchParams.get('id');
+	$: calendarToken = $page.url.searchParams.get('id');
 
-	onMount(() => {
+	$: {
 		if (!calendarToken) {
-			window.location.href = `?id=public`;
+			goto(`?id=public`);
 		}
 		if (calendarToken) {
 			fetchData(calendarToken);
 		}
-	});
+	}
 
 	async function fetchData(calendarToken: string) {
 		try {
@@ -129,7 +129,7 @@
 		}
 	}
 	function changeCalendar(event: CustomEvent) {
-		window.location.href = `?id=${event.detail.value}`;
+		goto(`?id=${event.detail.value}`);
 	}
 
 	function valueForDay(value: Option | undefined, day: number, month: number) {
