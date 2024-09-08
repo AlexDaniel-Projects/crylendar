@@ -154,7 +154,7 @@
 			</Field>
 		</div>
 	</Dialog>
-	<div class="flex items-center mb-4 gap-1">
+	<div class="flex items-stretch mb-4 gap-1">
 		<Button icon={mdiInformationOutline} variant="fill" color="primary">about</Button>
 
 		<Button icon={mdiChevronLeft} variant="fill" color="primary" on:click={() => currentYear--}
@@ -164,8 +164,6 @@
 		<Button icon={mdiChevronRight} variant="fill" color="primary" on:click={() => currentYear++}
 			>next year</Button
 		>
-
-		|
 
 		<SelectField
 			label="current calendar"
