@@ -3,6 +3,7 @@
 	import { mdiChevronLeft, mdiChevronRight, mdiPlusBox } from '@mdi/js';
 	import { format, getDaysInMonth } from 'date-fns';
 	import { page } from '$app/stores';
+	import { browser } from '$app/environment';
 	import { onMount } from 'svelte';
 
 	const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
@@ -163,15 +164,20 @@
 			><div class="px-2">next year</div></Button
 		>
 
-		<SelectField
-			label="current calendar"
-			options={availableCalendars}
-			clearable={false}
-			dense={true}
-			stepper={true}
-			value={calendarToken}
-			on:change={changeCalendar}
-		/>
+		{#if browser}
+			<SelectField
+				label="current calendar"
+				class="max-w-[300px]"
+				options={availableCalendars}
+				clearable={false}
+				dense={true}
+				stepper={true}
+				value={calendarToken}
+				on:change={changeCalendar}
+			/>
+		{:else}
+			<div class="w-[300px] h-[46px] bg-surface-100 rounded"></div>
+		{/if}
 		<Button icon={mdiPlusBox} variant="fill" color="primary" on:click={openDialog}
 			><div class="pl-2">create new</div></Button
 		>
