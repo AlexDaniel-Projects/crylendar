@@ -177,7 +177,7 @@
 					on:change={changeCalendar}
 				/>
 			{:else}
-				<div class="w-[300px] h-[46px] bg-surface-100 rounded"></div>
+				<div class="w-[300px] h-[46px] bg-surface-100 rounded animate-pulse"></div>
 			{/if}
 			<Button icon={mdiPlusBox} variant="fill" color="primary" on:click={openDialog}
 				><div class="pl-2">create new</div></Button
