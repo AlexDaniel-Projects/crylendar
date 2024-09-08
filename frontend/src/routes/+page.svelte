@@ -219,17 +219,14 @@
 				<div class="font-bold">{month}</div>
 				{#each days as day}
 					{@const key = asKey(currentYear, i + 1, day)}
+					{@const dataValue = valueForDay(calendarData.data[key], day, i)}
 					<div class="w-full">
 						<button
 							on:mousedown={() => toggleDataPoint(key)}
 							class="w-full Button flex items-center justify-center"
-							disabled={key > today}
+							disabled={key > today || dataValue === -2}
 						>
-							<ScrollingValue
-								axis="x"
-								value={valueForDay(calendarData.data[key], day, i)}
-								let:value
-							>
+							<ScrollingValue axis="x" value={dataValue} let:value>
 								<div
 									class={`min-h-[52px] flex items-center justify-center ${value !== -1 ? 'text-3xl' : 'text-lg'}`}
 								>
