@@ -176,9 +176,11 @@
 		>
 	</div>
 
-	<div class="grid grid-cols-1 w-full min-w-[1200px]">
+	<div class="grid grid-cols-[repeat(12,_minmax(0,_1fr))] xl:grid-cols-1 w-full xl:min-w-[1200px]">
 		{#each months as month, i}
-			<div class="grid grid-cols-[repeat(32,_minmax(0,_1fr))] justify-items-center items-center">
+			<div
+				class="grid grid-cols-1 xl:grid-cols-[repeat(32,_minmax(0,_1fr))] justify-items-center items-center border-r xl:border-r-0 xl:border-b last:border-0 border-gray-500"
+			>
 				<div class="font-bold">{month}</div>
 				{#each days as day}
 					{@const key = asKey(currentYear, i + 1, day)}
