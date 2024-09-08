@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Button, ScrollingValue, Dialog, SelectField, Field, Input } from 'svelte-ux';
-	import { mdiChevronLeft, mdiChevronRight, mdiInformationOutline, mdiPlusBox } from '@mdi/js';
+	import { mdiChevronLeft, mdiChevronRight, mdiPlusBox } from '@mdi/js';
 	import { format, getDaysInMonth } from 'date-fns';
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
@@ -155,8 +155,6 @@
 		</div>
 	</Dialog>
 	<div class="flex items-stretch mb-4 gap-1">
-		<Button icon={mdiInformationOutline} variant="fill" color="primary">about</Button>
-
 		<Button icon={mdiChevronLeft} variant="fill" color="primary" on:click={() => currentYear--}
 			>previous year</Button
 		>
