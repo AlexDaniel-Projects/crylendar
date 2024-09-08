@@ -155,7 +155,7 @@
 			</Field>
 		</div>
 	</Dialog>
-	<div class="flex items-stretch mb-4 gap-1">
+	<div class="flex flex-wrap-reverse items-stretch mb-4 gap-1 justify-center">
 		<Button icon={mdiChevronLeft} variant="fill" color="primary" on:click={() => currentYear--}
 			><div class="px-2">previous year</div></Button
 		>
@@ -164,23 +164,25 @@
 			><div class="px-2">next year</div></Button
 		>
 
-		{#if browser}
-			<SelectField
-				label="current calendar"
-				class="max-w-[300px]"
-				options={availableCalendars}
-				clearable={false}
-				dense={true}
-				stepper={true}
-				value={calendarToken}
-				on:change={changeCalendar}
-			/>
-		{:else}
-			<div class="w-[300px] h-[46px] bg-surface-100 rounded"></div>
-		{/if}
-		<Button icon={mdiPlusBox} variant="fill" color="primary" on:click={openDialog}
-			><div class="pl-2">create new</div></Button
-		>
+		<div class="flex items-stretch gap-1">
+			{#if browser}
+				<SelectField
+					label="current calendar"
+					class="max-w-[300px]"
+					options={availableCalendars}
+					clearable={false}
+					dense={true}
+					stepper={true}
+					value={calendarToken}
+					on:change={changeCalendar}
+				/>
+			{:else}
+				<div class="w-[300px] h-[46px] bg-surface-100 rounded"></div>
+			{/if}
+			<Button icon={mdiPlusBox} variant="fill" color="primary" on:click={openDialog}
+				><div class="pl-2">create new</div></Button
+			>
+		</div>
 	</div>
 
 	<div class="grid grid-cols-[repeat(12,_minmax(0,_1fr))] xl:grid-cols-1 w-full xl:min-w-[1200px]">
