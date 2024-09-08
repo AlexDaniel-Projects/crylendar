@@ -5,6 +5,7 @@
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
 	import { browser } from '$app/environment';
+	import { onMount } from 'svelte';
 
 	const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
@@ -14,10 +15,11 @@
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars -- temporarily not used
 	let loading = false;
 
-	let availableCalendars = [
+	const defaultCalendars = [
 		{ label: 'public calendar', value: 'public' }, //
 		{ label: 'another public calendar', value: 'public-2' } //
 	];
+	let availableCalendars: typeof defaultCalendars = [];
 
 	interface CalendarData {
 		token: string;
@@ -39,8 +41,25 @@
 		if (!calendarToken) {
 			goto(`?id=public`);
 		}
-		if (calendarToken) {
+		if (calendarToken && browser) {
 			fetchData(calendarToken);
+		}
+	}
+
+	onMount(() => loadCalendars());
+
+	function saveCalendars(calendarData: CalendarData) {
+		const calendars = Object.fromEntries(availableCalendars.map((c) => [c.value, c]));
+		Object.assign(calendars, JSON.parse(localStorage.getItem('calendars') || '{}'));
+		calendars[calendarData.token] = { label: calendarData.name, value: calendarData.token };
+		localStorage.setItem('calendars', JSON.stringify(calendars));
+	}
+
+	function loadCalendars() {
+		if (localStorage.getItem('calendars')) {
+			availableCalendars = Object.values(JSON.parse(localStorage.getItem('calendars') || '{}'));
+		} else {
+			availableCalendars = defaultCalendars;
 		}
 	}
 
@@ -50,6 +69,7 @@
 			const response = await fetch(`${apiUrl}/calendars/${calendarToken}/`);
 			if (response.status === 200) {
 				calendarData = await response.json();
+				saveCalendars(calendarData);
 			}
 			loading = false;
 		} catch (error) {
@@ -165,7 +185,7 @@
 		>
 
 		<div class="flex items-stretch gap-1">
-			{#if browser}
+			{#if browser && availableCalendars.length > 0}
 				<SelectField
 					label="current calendar"
 					class="max-w-[300px]"
