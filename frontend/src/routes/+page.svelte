@@ -131,14 +131,14 @@
 		window.location.href = `?id=${event.detail.value}`;
 	}
 
-	function valueForDay(key: string, day: number, month: number) {
+	function valueForDay(value: Option | undefined, day: number, month: number) {
 		if (day > daysInMonth[month]) {
 			return -2;
 		}
-		if (!calendarData.data[key]) {
+		if (!value) {
 			return -1;
 		}
-		return options.indexOf(calendarData.data[key]);
+		return options.indexOf(value);
 	}
 </script>
 
@@ -192,7 +192,11 @@
 							class="w-full Button flex items-center justify-center"
 							disabled={key > today}
 						>
-							<ScrollingValue axis="x" value={valueForDay(key, day, i)} let:value>
+							<ScrollingValue
+								axis="x"
+								value={valueForDay(calendarData.data[key], day, i)}
+								let:value
+							>
 								<div
 									class={`min-h-[52px] flex items-center justify-center ${value !== -1 ? 'text-3xl' : 'text-lg'}`}
 								>
