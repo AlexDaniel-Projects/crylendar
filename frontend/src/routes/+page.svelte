@@ -169,6 +169,7 @@
 			clearable={false}
 			dense={true}
 			stepper={true}
+			value={calendarToken}
 			on:change={changeCalendar}
 		/>
 		<Button icon={mdiPlusBox} variant="fill" color="primary" on:click={openDialog}
