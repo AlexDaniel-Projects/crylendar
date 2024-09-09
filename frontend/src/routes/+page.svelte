@@ -228,7 +228,7 @@
 						>
 							<ScrollingValue axis="x" value={dataValue} let:value>
 								<div
-									class={`min-h-[52px] flex items-center justify-center ${value !== -1 ? 'text-3xl' : 'text-lg'}`}
+									class={`min-h-[32px] md:min-h-[52px] flex items-center justify-center ${value !== -1 ? 'text-2xl md:text-3xl' : 'text-md md:text-lg'}`}
 								>
 									<div
 										class="{key === today ? 'today' : ''} {isWeekend(key) ? 'weekend' : 'workday'}"
