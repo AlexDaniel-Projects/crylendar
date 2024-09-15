@@ -5,7 +5,6 @@
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
 	import { browser } from '$app/environment';
-	import { onMount } from 'svelte';
 
 	const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
@@ -48,8 +47,6 @@
 		}
 	}
 
-	onMount(() => loadCalendars());
-
 	function saveCalendars(calendarData: CalendarData) {
 		const calendars = Object.fromEntries(availableCalendars.map((c) => [c.value, c]));
 		Object.assign(calendars, JSON.parse(localStorage.getItem('calendars') || '{}'));
@@ -60,8 +57,11 @@
 	function loadCalendars() {
 		if (localStorage.getItem('calendars')) {
 			availableCalendars = Object.values(JSON.parse(localStorage.getItem('calendars') || '{}'));
-		} else {
-			availableCalendars = defaultCalendars;
+		}
+		for (const calendar of defaultCalendars) {
+			if (!availableCalendars.find((c) => c.value === calendar.value)) {
+				availableCalendars.push(calendar);
+			}
 		}
 	}
 
@@ -72,6 +72,7 @@
 			if (response.status === 200) {
 				calendarData = await response.json();
 				saveCalendars(calendarData);
+				loadCalendars();
 			}
 			loading = false;
 		} catch (error) {
@@ -146,7 +147,6 @@
 			if (createdCalendars.length === 1) {
 				const { token } = createdCalendars[0];
 				await fetchData(token);
-				loadCalendars();
 				goto(`?id=${token}`);
 			}
 		} catch (error) {
