@@ -134,6 +134,7 @@
 	function openDialog() {
 		dialogOpen = true;
 	}
+
 	async function createCalendar() {
 		try {
 			const result = await fetch(`${apiUrl}/calendars/`, {
@@ -144,12 +145,15 @@
 			const createdCalendars = await result.json();
 			if (createdCalendars.length === 1) {
 				const { token } = createdCalendars[0];
-				window.location.href = `?id=${token}`;
+				await fetchData(token);
+				loadCalendars();
+				goto(`?id=${token}`);
 			}
 		} catch (error) {
 			console.error('Failed to create calendar:', error);
 		}
 	}
+
 	function changeCalendar(event: CustomEvent) {
 		goto(`?id=${event.detail.value}`);
 	}
