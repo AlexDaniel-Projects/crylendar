@@ -1,6 +1,6 @@
 {
   "name": "crylendar-backend",
-  "packageManager": "pnpm@10.20.0+sha512.cf9998222162dd85864d0a8102e7892e7ba4ceadebbf5a31f9c2fce48dfce317a9c53b9f6464d1ef9042cba2e02ae02a9f7c143a2b438cd93c91840f0192b9dd",
+  "packageManager": "pnpm@10.34.5",
   "type": "module",
   "private": true,
   "scripts": {
@@ -10,19 +10,19 @@
   },
   "dependencies": {
     "@hono/node-server": "1.12.2",
-    "dotenv": "16.4.5",
+    "dotenv": "16.6.1",
     "drizzle-orm": "0.33.0",
     "hono": "4.5.11",
-    "postgres": "3.4.4",
+    "postgres": "3.4.9",
     "unique-names-generator": "4.7.1"
   },
   "devDependencies": {
-    "@eslint/js": "9.10.0",
-    "@types/node": "20.16.5",
-    "drizzle-kit": "0.24.2",
-    "eslint": "9.9.1",
-    "globals": "15.9.0",
-    "tsx": "4.19.0",
-    "typescript-eslint": "8.4.0"
+    "@eslint/js": "9.39.5",
+    "@types/node": "20.19.43",
+    "drizzle-kit": "0.31.10",
+    "eslint": "9.39.5",
+    "globals": "15.15.0",
+    "tsx": "4.23.13",
+    "typescript-eslint": "8.69.0"
   }
 }
